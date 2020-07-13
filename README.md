@@ -9,8 +9,7 @@ from strictly import *
 
 # just decorate your annotated function with 'strictly'
 @strictly
-def heyey(name: str, greeting: str = 'hey', *,
-        punctuation: Optional[str]='!') -> str:
+def heyey(name: str, greeting: str = 'hey', *, punctuation: Optional[str]='!') -> None:
     """
     desc: this is now strictly typed, whenever it is called strictly will
         check the inputs against the type hints above;
@@ -25,6 +24,18 @@ heyey('Dingo')
 heyey('Zoot', 'oh no, bad bad')
 # this should error and be caught by strictly
 heyey(5)
+```
+```
+hey Dingo!
+oh no, bad bad Zoot!
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/Users/jonahym/Documents/thoughts/py_static/strictly.py", line 79, in strict_func
+    raise TypingError( # this line is from strictly
+strictly.TypingError:
+invalid argument type in call of 'heyey', <function heyey at 0x7ff74800baf0>
+        argument 'name' must be of type <str>
+        found argument of type <int> from value 5
 ```
 
 ## Incremental Integration
@@ -49,6 +60,17 @@ foo(3.0, 4)
 # this will not work b/c `str`s and 'int's cannot be added together
 foo('5', 6)
 ```
+<details>
+    <summary>Traceback</summary>
+    ```
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+      File "/Users/jonahym/Documents/thoughts/py_static/strictly.py", line 95, in strict_func
+        ret = func(*args, **kwargs)
+      File "<stdin>", line 3, in foo
+    TypeError: can only concatenate str (not "int") to str
+    ```
+</details>
 
 ## Using the Typing Module
 Currently, strictly has limited support for generic notation from the typing module; supported generics include `Dict[T, S]`, `List[T]`, `Tuple[T]`, `Union[T, S...]`, and `Optional[T]`.
