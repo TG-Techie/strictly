@@ -12,7 +12,7 @@ from strictly import *
 def heyey(name: str, greeting: str = 'hey', *, punctuation: Optional[str]='!') -> None:
     """
     desc: print a greeting to say hey.
-        this is a strictly typed, whenever it is called strictly will
+        this is a strictly typed function, whenever it is called strictly will
         check the inputs against the type hints above;
     """
     if punctuation is None:
