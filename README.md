@@ -61,6 +61,7 @@ foo(3.0, 4)
 
 # this will not work b/c `str`s and 'int's cannot be added together
 foo('5', 6)
+# this type error was not by strictly b/c the argument was not annotated
 ```
 <details>
 <summary>Traceback</summary>
@@ -149,4 +150,8 @@ assert all([isinstance(num, int) for num in nums]), "the input must only contain
 - Features: If you have proposed please fork this repositor and make a pull request.
 
 ### License
- Strictly is distributed freely under the MIT License.
+Strictly is distributed freely under the MIT License.
+
+#### possible Future Features (no promises):
+ - A `strictly.require_hints` flag to ensure every argument has a type hint
+ - An opt-in option feature to programatically check the content of generics.

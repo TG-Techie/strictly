@@ -109,7 +109,6 @@ def strictly(func):
 
 # set the disable flag
 strictly.disable = not __debug__
-# for later #strictly._report_unchecked = False # prints if there is no annotation for a specific argument on a function
 
 # tests
 if __name__ == '__main__':
