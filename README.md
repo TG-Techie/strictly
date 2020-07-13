@@ -99,7 +99,7 @@ TypeError: can only concatenate str (not "int") to str
 </details>
 
 ## Distribution / Production
-Proceedurally type checking every input at runtime slows down performance,
+Procedurally type checking every input at runtime slows down performance,
 inorder to combat this strictly can be disbaled completely.
 ```python
 strictly.disable = True
