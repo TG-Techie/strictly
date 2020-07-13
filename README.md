@@ -105,7 +105,8 @@ inorder to combat this strictly can be disbaled completely.
 strictly.disable = True
 ```
 When strictly is disabled any previously altered functions will not be checked when called.
-Additionally, any functions decorated after strictly is disabled will not be altered and won't be checked even if strictly is enabled later.
+Additionally, any functions decorated after strictly is disabled will not be altered and
+won't be checked, even if strictly is enabled later.
 <details>
 <summary>Longer Example</summary>
 
@@ -122,7 +123,7 @@ strictly.disable = True # from here on all functions are unaltered
 def bar(y: str) -> str:
     return y
 
-#since strictly is disabled both of these
+#since strictly is disabled...
 foo(None) # this has a small performance hit b/c it was altered
 bar(None)
 ```
@@ -182,5 +183,6 @@ assert all([isinstance(num, int) for num in nums]), "the input must only contain
 Strictly is distributed freely under the MIT License.
 
 #### Possible Future Features (no promises):
+ - Add a `strictly.disable_checks` flag so that every function gets altered but won't be checked at runtime.
  - A `strictly.require_hints` flag to ensure every argument has a type hint (defauting False).
  - An opt-in option feature to programatically check the content of generics.
