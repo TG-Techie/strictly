@@ -105,7 +105,7 @@ inorder to combat this strictly can be disbaled completely.
 strictly.disable = True
 ```
 When strictly is disabled any previously altered functions will not be checked when called.
-Additionally, any functions decorated after strictly is disabled will not altered and won't be checked even if strictly is enabled later.
+Additionally, any functions decorated after strictly is disabled will not be altered and won't be checked even if strictly is enabled later.
 <details>
 <summary>Longer Example</summary>
 
