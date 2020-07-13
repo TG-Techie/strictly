@@ -14,4 +14,4 @@ foo(3.0, 4)
 
 # this will not work b/c `str`s and 'int's cannot be added together
 foo('5', 6)
-# this type error was not by strictly b/c the argument was not annotated
+# this type error was not caught by strictly b/c the argument was not annotated
