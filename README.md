@@ -30,6 +30,8 @@ heyey(5)
 <summary>Traceback</summary>
 
 ```
+hey Dingo!
+oh no, bad bad Zoot!
 Traceback (most recent call last):
   File "/Users/jonahym/Documents/thoughts/py_static/negative_tests/simple.py", line 21, in <module>
     heyey(5)
