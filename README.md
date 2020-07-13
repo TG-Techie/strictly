@@ -179,6 +179,6 @@ assert all([isinstance(num, int) for num in nums]), "the input must only contain
 ### License
 Strictly is distributed freely under the MIT License.
 
-#### possible Future Features (no promises):
- - A `strictly.require_hints` flag to ensure every argument has a type hint
+#### Possible Future Features (no promises):
+ - A `strictly.require_hints` flag to ensure every argument has a type hint (defauting False).
  - An opt-in option feature to programatically check the content of generics.
