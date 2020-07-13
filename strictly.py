@@ -70,7 +70,7 @@ def strictly(func):
     def strict_func(*args, **kwargs):
         # if strictly is disable at runtime do not check types
         if strictly.disable:
-            return func(*args, **kwargs)
+            return func(*args, **kwargs) # this line is a pass-through from strictly
 
         # check the positional arguments
         for pack, arg in zip(var_packs, args):
@@ -108,12 +108,14 @@ def strictly(func):
     return strict_func
 
 # set the disable flag
-strictly.disable = False
-strictly._report_unchecked = False # for later #  prints if there is no annotation for a specific argument on a function
+strictly.disable = not __debug__
+# for later #strictly._report_unchecked = False # prints if there is no annotation for a specific argument on a function
 
 # tests
 if __name__ == '__main__':
     from typing import *
+
+    strictly.disable = False
 
     @strictly
     def foo(a:int,  aa, b : int,  c : int = 5, *, d : Optional[str]) -> int :

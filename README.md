@@ -25,9 +25,10 @@ heyey('Zoot', 'oh no, bad bad')
 # this should error and be caught by strictly
 heyey(5)
 ```
+<details>
+<summary>Traceback</summary>
+
 ```
-hey Dingo!
-oh no, bad bad Zoot!
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
   File "/Users/jonahym/Documents/thoughts/py_static/strictly.py", line 79, in strict_func
@@ -37,6 +38,7 @@ invalid argument type in call of 'heyey', <function heyey at 0x7ff74800baf0>
         argument 'name' must be of type <str>
         found argument of type <int> from value 5
 ```
+</details>
 
 ## Incremental Integration
 You do not need to annotate every argument, this is meant to make the
@@ -61,23 +63,55 @@ foo(3.0, 4)
 foo('5', 6)
 ```
 <details>
-    <summary>Traceback</summary>
-    ```
-    Traceback (most recent call last):
-      File "<stdin>", line 1, in <module>
-      File "/Users/jonahym/Documents/thoughts/py_static/strictly.py", line 95, in strict_func
-        ret = func(*args, **kwargs)
-      File "<stdin>", line 3, in foo
-    TypeError: can only concatenate str (not "int") to str
-    ```
+<summary>Traceback</summary>
+
+```
+Traceback (most recent call last):
+  File "<stdin>", line 16, in <module>
+  File "/Users/jonahym/Documents/thoughts/py_static/strictly.py", line 95, in strict_func
+    ret = func(*args, **kwargs)
+  File "<stdin>", line 1, in foo
+TypeError: can only concatenate str (not "int") to str
+```
 </details>
+
+## Distribution / Production
+Proceedurally type checking every input at runtime slows down performance, inorder to combat this strictly can be disbaled completely.
+```python
+strictly.disable = True
+```
+When strictly is disabled any previously altered functions will not be checked.
+Additionally, any functions decorated after strictly is disabled will not altered and won't be checked even if strictly is enabled later.
+<details>
+<summary>Longer Example</summary>
+
+```python
+from strictly import *
+
+@strictly
+def foo(x:int) -> int:
+    return x
+
+strictly.disable = True # from here on all functions are unaltered
+
+@strictly
+def bar(y: str) -> str:
+    return y
+
+#since strictly is disabled both of these
+foo(None) # this has a small performance hit b/c it was altered
+bar(None)
+```
+</details>
+
 
 ## Using the Typing Module
 Currently, strictly has limited support for generic notation from the typing module; supported generics include `Dict[T, S]`, `List[T]`, `Tuple[T]`, `Union[T, S...]`, and `Optional[T]`.
 
-Typing Module functionality may be extended, changed, or replaced in the future.
+ Typing Module functionality may be extended, changed, or replaced in the future.
+
 #### Iterable Generics
-Iterable generics are treated as normal variables, only the argument is checked to for proper type, not the contents of teh argument. for example:
+Iterable generics are treated as normal variables, only the argument is checked to for proper type, not the contents of the argument. for example:
 ```python
 from typing import *
 from strictly import *
@@ -90,10 +124,29 @@ find_max([7, 2, 5, 9, 3])
 # however, it will not check the the objects in the list
 find_max([7, 2, 5, 9, '9000'])
 ```
-This functionality was intentional excluded to reduce runtime burden. Check this kind of error conventionally by:
+<details>
+<summary>Traceback</summary>
+
+```
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/Users/jonahym/Documents/thoughts/py_static/strictly.py", line 95, in strict_func
+    ret = func(*args, **kwargs)
+  File "<stdin>", line 3, in find_max
+TypeError: '>' not supported between instances of 'str' and 'int'
+```
+</details>
+<br/>
+This functionality was intentional excluded to reduce runtime burden. Check this kind of error conventionally:
+
 ```python
 assert all([isinstance(num, int) for num in nums]), "the input must only contain 'int's"
 ```
 
-## Issues:
-if you find a bug/issue in strictly or have a feature toropose please file an issue or pull request respectively.
+## Issues and Features:
+- In either case please feature feel free message me on discord: `TG-Techie#5402`.
+- Bugs: If you find a bug/issue in strictly please file an issue on github with an example and explanation of the issue.
+- Features: If you have proposed please fork this repositor and make a pull request.
+
+### License
+ Strictly is distributed freely under the MIT License.
