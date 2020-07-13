@@ -173,7 +173,7 @@ assert all([isinstance(num, int) for num in nums]), "the input must only contain
 
 ## Issues and Features:
 - For both Issues and proposed features please feel free to __message me on discord__: `TG-Techie#5402`.
-- __Bugs__: If you find a bug/issue in strictly please file an issue on github with an example and explanation of the issue.
+- __Bugs__: If you find a bug/issue in strictly please file an issue on github with an example and explanation.
 - __Features__: If you have a proposed feature please fork this repositor and make a pull request with the code or without code make an issue to discuss the possible feature.
 
 ### License
