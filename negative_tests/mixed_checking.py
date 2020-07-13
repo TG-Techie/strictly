@@ -8,7 +8,7 @@ def foo(unchecked, checked: int) -> int:
 foo(1, 2)
 
 # foo only allows ints to be returned
-#foo(3.0, 4)
+foo(3.0, 4)
 # if returning 'float's is desired functionality the return annotation should
 #   be from the typing module, EX: `Union[int, float]`
 
