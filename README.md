@@ -167,7 +167,7 @@ TypeError: '>' not supported between instances of 'str' and 'int'
 ```
 </details>
 <br/>
-This functionality was intentional excluded to reduce runtime burden. Check this kind of error conventionally:
+This functionality was intentionally excluded to reduce runtime burden. Check this kind of error conventionally:
 
 ```python
 assert all([isinstance(num, int) for num in nums]), "the input must only contain 'int's"
