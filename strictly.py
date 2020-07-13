@@ -76,7 +76,7 @@ def strictly(func):
         for pack, arg in zip(var_packs, args):
             index, name, types = pack
             if not isinstance(arg, types):
-                raise TypingError( # this line is from strictly
+                raise TypingError( # this Error is from strictly
                      f"\ninvalid argument type in call of {repr(func.__name__)}, {func}\n"\
                     +f"\targument '{name}' must be of type <{', '.join([typ.__name__ for typ in types])}>\n"\
                     +f"\tfound argument of type <{type(arg).__name__}> from value {repr(arg)}"
@@ -86,17 +86,21 @@ def strictly(func):
             types = var_dict[kw]
             #print(kw, arg, types)
             if not isinstance(arg, types):
-                raise TypingError( # this line is from strictly
+                raise TypingError( # this Error is from strictly
                      f"\ninvalid keyword argument type in call of {repr(func.__name__)}, {func}\n"\
                     +f"\tkwarg '{kw}' must be of type <{', '.join([typ.__name__ for typ in types])}>\n"\
                     +f"\tfound kwarg of type <{type(arg).__name__}> from value {repr(arg)}"
                     )
         # run the actual function
-        ret = func(*args, **kwargs)
+        # move the call onto another line to make excepts clearer
+        ret = \
+        func( # this line is a pass-through from strictly
+            *args, **kwargs
+        )
         # check the type of the return value
         if check_return:
             if not isinstance(ret, ret_types):
-                raise TypingError( # this line is from strictly
+                raise TypingError( # this Error is from strictly
                      f"\nincorrect return type from {func}\n"\
                     +f"\texpected type <{', '.join([typ.__name__ for typ in ret_types])}>\n"\
                     +f"\tfound return of type <{type(ret).__name__}> from value {repr(ret)}"

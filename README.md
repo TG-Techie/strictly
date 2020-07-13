@@ -9,7 +9,7 @@ from strictly import *
 
 # just decorate your annotated function with 'strictly'
 @strictly
-def heyey(name: str, greeting: str='hey', *, punctuation: Optional[str]='!') -> None:
+def heyey(name: str, greeting: str='hey', *, punctuation: Union[str, None]='!') -> None:
     """
     print a greeting to say hey.
     this is a strictly typed function, whenever it is called strictly will
@@ -31,11 +31,12 @@ heyey(5)
 
 ```
 Traceback (most recent call last):
-  File "<stdin>", line 20, in <module>
+  File "/Users/jonahym/Documents/thoughts/py_static/negative_tests/simple.py", line 21, in <module>
+    heyey(5)
   File "/Users/jonahym/Documents/thoughts/py_static/strictly.py", line 79, in strict_func
-    raise TypingError( # this line is from strictly
+    raise TypingError( # this Error is from strictly
 strictly.TypingError:
-invalid argument type in call of 'heyey', <function heyey at 0x7ff74800baf0>
+invalid argument type in call of 'heyey', <function heyey at 0x7fd160203c10>
         argument 'name' must be of type <str>
         found argument of type <int> from value 5
 ```
@@ -56,33 +57,52 @@ def foo(unchecked, checked: int) -> int:
 foo(1, 2)
 
 # foo only allows ints to be returned
-foo(3.0, 4)
+foo(3.0, 4) # TypingError
 # if returning 'float's is desired functionality the return annotation should
 #   be from the typing module, EX: `Union[int, float]`
 
 # this will not work b/c `str`s and 'int's cannot be added together
-foo('5', 6)
+foo('5', 6) # concatenation error
 # this type error was not by strictly b/c the argument was not annotated
 ```
 <details>
-<summary>Traceback</summary>
+<summary>TypingError Traceback</summary>
 
 ```
 Traceback (most recent call last):
-  File "<stdin>", line 16, in <module>
-  File "/Users/jonahym/Documents/thoughts/py_static/strictly.py", line 95, in strict_func
-    ret = func(*args, **kwargs)
-  File "<stdin>", line 1, in foo
+  File "/Users/jonahym/Documents/thoughts/py_static/negative_tests/mixed_checking.py", line 11, in <module>
+    foo(3.0, 4)
+  File "/Users/jonahym/Documents/thoughts/py_static/strictly.py", line 99, in strict_func
+    raise TypingError( # this line is from strictly
+strictly.TypingError:
+incorrect return type from <function foo at 0x7f8c101f2af0>
+        expected type <int>
+        found return of type <float> from value 7.0
+```
+</details>
+
+<details>
+<summary>Concatenation Traceback</summary>
+
+```
+Traceback (most recent call last):
+  File "/Users/jonahym/Documents/thoughts/py_static/negative_tests/mixed_checking.py", line 16, in <module>
+    foo('5', 6)
+  File "/Users/jonahym/Documents/thoughts/py_static/strictly.py", line 97, in strict_func
+    func( # this line is a pass-through from strictly
+  File "/Users/jonahym/Documents/thoughts/py_static/negative_tests/mixed_checking.py", line 5, in foo
+    return unchecked+checked
 TypeError: can only concatenate str (not "int") to str
 ```
 </details>
 
 ## Distribution / Production
-Proceedurally type checking every input at runtime slows down performance, inorder to combat this strictly can be disbaled completely.
+Proceedurally type checking every input at runtime slows down performance,
+inorder to combat this strictly can be disbaled completely.
 ```python
 strictly.disable = True
 ```
-When strictly is disabled any previously altered functions will not be checked.
+When strictly is disabled any previously altered functions will not be checked when called.
 Additionally, any functions decorated after strictly is disabled will not altered and won't be checked even if strictly is enabled later.
 <details>
 <summary>Longer Example</summary>
@@ -108,12 +128,16 @@ bar(None)
 
 
 ## Using the Typing Module
-Currently, strictly has limited support for generic notation from the typing module; supported generics include `Dict[T, S]`, `List[T]`, `Tuple[T]`, `Union[T, S...]`, and `Optional[T]`.
+Currently, strictly has limited support for generic notation from the typing module;
+supported generics include `Dict[T, S]`, `List[T]`, `Tuple[T]`, `Union[T, S...]`,
+and `Optional[T]`.
 
- Typing Module functionality may be extended, changed, or replaced in the future.
+ Strictly speaking, typing module functionality __may__ be extended or altered in the future.
 
 #### Iterable Generics
-Iterable generics are treated as normal variables, only the argument is checked to for proper type, not the contents of the argument. for example:
+Iterable generics are treated as normal variables, only the argument is
+checked to for proper type, not the contents of the argument.
+for example:
 ```python
 from typing import *
 from strictly import *
@@ -131,10 +155,12 @@ find_max([7, 2, 5, 9, '9000'])
 
 ```
 Traceback (most recent call last):
-  File "<stdin>", line 10, in <module>
-  File "/Users/jonahym/Documents/thoughts/py_static/strictly.py", line 95, in strict_func
-    ret = func(*args, **kwargs)
-  File "<stdin>", line 3, in find_max
+  File "/Users/jonahym/Documents/thoughts/py_static/negative_tests/generic_check.py", line 10, in <module>
+    find_max([7, 2, 5, 9, '9000'])
+  File "/Users/jonahym/Documents/thoughts/py_static/strictly.py", line 97, in strict_func
+    func( # this line is a pass-through from strictly
+  File "/Users/jonahym/Documents/thoughts/py_static/negative_tests/generic_check.py", line 6, in find_max
+    return max(nums)
 TypeError: '>' not supported between instances of 'str' and 'int'
 ```
 </details>
@@ -146,9 +172,9 @@ assert all([isinstance(num, int) for num in nums]), "the input must only contain
 ```
 
 ## Issues and Features:
-- In either case please feature feel free message me on discord: `TG-Techie#5402`.
-- Bugs: If you find a bug/issue in strictly please file an issue on github with an example and explanation of the issue.
-- Features: If you have proposed please fork this repositor and make a pull request.
+- For both Issues and proposed features please feel free to __message me on discord__: `TG-Techie#5402`.
+- __Bugs__: If you find a bug/issue in strictly please file an issue on github with an example and explanation of the issue.
+- __Features__: If you have a proposed feature please fork this repositor and make a pull request with the code or without code make an issue to discuss the possible feature.
 
 ### License
 Strictly is distributed freely under the MIT License.
