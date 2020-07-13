@@ -9,7 +9,7 @@ from strictly import *
 
 # just decorate your annotated function with 'strictly'
 @strictly
-def heyey(name: str, greeting: str = 'hey', *, punctuation: Optional[str]='!') -> None:
+def heyey(name: str, greeting: str='hey', *, punctuation: Optional[str]='!') -> None:
     """
     desc: print a greeting to say hey.
         this is a strictly typed function, whenever it is called strictly will
@@ -91,7 +91,7 @@ Additionally, any functions decorated after strictly is disabled will not altere
 from strictly import *
 
 @strictly
-def foo(x:int) -> int:
+def foo(x: int) -> int:
     return x
 
 strictly.disable = True # from here on all functions are unaltered
