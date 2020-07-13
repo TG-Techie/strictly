@@ -30,7 +30,7 @@ heyey(5)
 
 ```
 Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
+  File "<stdin>", line 20, in <module>
   File "/Users/jonahym/Documents/thoughts/py_static/strictly.py", line 79, in strict_func
     raise TypingError( # this line is from strictly
 strictly.TypingError:
@@ -129,7 +129,7 @@ find_max([7, 2, 5, 9, '9000'])
 
 ```
 Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
+  File "<stdin>", line 10, in <module>
   File "/Users/jonahym/Documents/thoughts/py_static/strictly.py", line 95, in strict_func
     ret = func(*args, **kwargs)
   File "<stdin>", line 3, in find_max
