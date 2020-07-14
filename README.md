@@ -1,8 +1,11 @@
 # python-strictly
 
 A run-time tool to enforce strict typing in python using type hints.
+<br/>
+Write type-safe python code with confidence, focus on the problem you need to solve.
 
 ## Usage Example:
+All you need to do is decorate your functions with `strictly`.
 ```python
 from typing import *
 from strictly import *
@@ -27,7 +30,7 @@ heyey('Zoot', 'oh no, bad bad')
 heyey(5)
 ```
 <details>
-<summary>Traceback</summary>
+<summary>Show Traceback</summary>
 
 ```
 hey Dingo!
@@ -43,6 +46,69 @@ invalid argument type in call of 'heyey', <function heyey at 0x7fd160203c10>
         found argument of type <int> from value 5
 ```
 </details>
+
+## Type Checking Custom Classes
+Use strictly with custom classes as you would with a builtin class. Strictly has full support for single class type hints and limited support for Union and Generic notation
+(See: "Using the Typing Module" below).
+```python
+from strictly import *
+
+class Scene():
+    # any function (including methods) can by strictly typed
+    @strictly
+    def __init__(self, number: int):
+        # b/c this is a method the self argument is not annotated
+        # neither is the return type
+        self.number = number
+
+# You can use any class in the annotations, see the argument below
+@strictly
+def narrate(scene: Scene):
+    print(f"on to scene {scene.number}, which is a smashing scene with some"\
+        +" lovely acting, in which Arthur discovers a vital clue.")
+
+# let's test with good inputs
+the_scene = Scene(24)
+narrate(the_scene)
+# now let's add some bad inputs
+the_scene = Scene('not a number') # 1st TypingError
+narrate('nothing') # 2nd TypingError
+```
+<details>
+<summary>Show 1st Traceback</summary>
+
+```
+on to scene 24, which is a smashing scene with some lovely acting, in which Arthur discovers a vital clue.
+Traceback (most recent call last):
+  File "/Users/jonahym/Documents/thoughts/py_static/examples/simple_custom_classes.py", line 21, in <module>
+    the_scene = Scene('not a number') # TypingError
+  File "/Users/jonahym/Documents/thoughts/py_static/strictly.py", line 78, in strict_func
+    raise TypingError( # this Error is from strictly
+strictly.TypingError:
+invalid argument type in call of '__init__', <function Scene.__init__ at 0x7fc2b801c9d0>
+        argument 'number' must be of type <int>
+        found argument of type <str> from value 'not a number'
+```
+</details>
+
+<details>
+<summary>Show 2nd Traceback</summary>
+
+```
+on to scene 24, which is a smashing scene with some lovely acting, in which Arthur discovers a vital clue.
+Traceback (most recent call last):
+  File "/Users/jonahym/Documents/thoughts/py_static/examples/simple_custom_classes.py", line 22, in <module>
+    narrate('nothing') # 2nd TypingError
+  File "/Users/jonahym/Documents/thoughts/py_static/strictly.py", line 78, in strict_func
+    raise TypingError( # this Error is from strictly
+strictly.TypingError:
+invalid argument type in call of 'narrate', <function narrate at 0x7f8b1827e3a0>
+        argument 'scene' must be of type <Scene>
+        found argument of type <str> from value 'nothing'
+```
+</details>
+<br/>
+See `/examples/custom_classes.py` for more examples.
 
 ## Incremental Integration
 You do not need to annotate every argument, this is meant to make the
@@ -68,7 +134,7 @@ add('5', 6) # concatenation error
 # this type error was not caught by strictly b/c the 'unchecked' argument was not annotated
 ```
 <details>
-<summary>TypingError Traceback</summary>
+<summary>Show TypingError Traceback</summary>
 
 ```
 Traceback (most recent call last):
@@ -84,7 +150,7 @@ incorrect return type from <function foo at 0x7f8c101f2af0>
 </details>
 
 <details>
-<summary>Concatenation Traceback</summary>
+<summary>Show Concatenation Traceback</summary>
 
 ```
 Traceback (most recent call last):
@@ -97,6 +163,49 @@ Traceback (most recent call last):
 TypeError: can only concatenate str (not "int") to str
 ```
 </details>
+
+## Using the Typing Module
+Currently, strictly has limited support for generic notation from the typing module;
+supported generics include `Dict[T, S]`, `List[T]`, `Tuple[T]`,`Union[T, S...]`,and `Optional[T]` for non-generic inputs.
+
+Work on making strictly completely comnpatible with the typing module is on going (See: "Possible Future Feature" below).
+
+#### Iterable Generics
+Iterable generics are treated as normal variables, only the argument is
+checked to for proper type, not the contents of the argument.
+for example:
+```python
+from typing import *
+from strictly import *
+
+@strictly
+def find_max(nums : List[int]) -> int:
+    return max(nums)
+# will work, strictly check that the input is a list
+find_max([7, 2, 5, 9, 3])
+# however, it will not check the the objects in the list
+find_max([7, 2, 5, 9, '9000'])
+```
+<details>
+<summary>Show Traceback</summary>
+
+```
+Traceback (most recent call last):
+  File "/Users/jonahym/Documents/thoughts/py_static/negative_tests/generic_check.py", line 10, in <module>
+    find_max([7, 2, 5, 9, '9000'])
+  File "/Users/jonahym/Documents/thoughts/py_static/strictly.py", line 97, in strict_func
+    func( # this line is a pass-through from strictly
+  File "/Users/jonahym/Documents/thoughts/py_static/negative_tests/generic_check.py", line 6, in find_max
+    return max(nums)
+TypeError: '>' not supported between instances of 'str' and 'int'
+```
+</details>
+<br/>
+This functionality was intentionally excluded to reduce run-time burden. Check this kind of error conventionally:
+
+```python
+assert all([isinstance(num, int) for num in nums]), "the input must only contain 'int's"
+```
 
 ## Distribution / Production
 Procedurally type checking every input at run-time slows down performance,
@@ -129,51 +238,6 @@ bar(None)
 ```
 </details>
 
-
-## Using the Typing Module
-Currently, strictly has limited support for generic notation from the typing module;
-supported generics include `Dict[T, S]`, `List[T]`, `Tuple[T]`, `Union[T, S...]`,
-and `Optional[T]`.
-
- Strictly speaking, typing module functionality __may__ be extended or altered in the future.
-
-#### Iterable Generics
-Iterable generics are treated as normal variables, only the argument is
-checked to for proper type, not the contents of the argument.
-for example:
-```python
-from typing import *
-from strictly import *
-
-@strictly
-def find_max(nums : List[int]) -> int:
-    return max(nums)
-# will work, strictly check that the input is a list
-find_max([7, 2, 5, 9, 3])
-# however, it will not check the the objects in the list
-find_max([7, 2, 5, 9, '9000'])
-```
-<details>
-<summary>Traceback</summary>
-
-```
-Traceback (most recent call last):
-  File "/Users/jonahym/Documents/thoughts/py_static/negative_tests/generic_check.py", line 10, in <module>
-    find_max([7, 2, 5, 9, '9000'])
-  File "/Users/jonahym/Documents/thoughts/py_static/strictly.py", line 97, in strict_func
-    func( # this line is a pass-through from strictly
-  File "/Users/jonahym/Documents/thoughts/py_static/negative_tests/generic_check.py", line 6, in find_max
-    return max(nums)
-TypeError: '>' not supported between instances of 'str' and 'int'
-```
-</details>
-<br/>
-This functionality was intentionally excluded to reduce run-time burden. Check this kind of error conventionally:
-
-```python
-assert all([isinstance(num, int) for num in nums]), "the input must only contain 'int's"
-```
-
 ## Issues and Features:
 - For both Issues and proposed features please feel free to message me on discord: `TG-Techie#5402`.
 - __Bugs__: If you find a bug/issue in strictly please file an issue on github with an example and explanation.
@@ -183,6 +247,7 @@ assert all([isinstance(num, int) for num in nums]), "the input must only contain
 Strictly is distributed freely under the MIT License.
 
 #### Possible Future Features (no promises):
+ - support for `ForwardRef` Hint from the typing module.
  - Add a `strictly.disable_checks` flag so that every function gets altered but won't be checked at run-time.
  - A `strictly.require_hints` flag to ensure every argument has a type hint (defauting False).
  - An opt-in option feature to programatically check the content of generics.

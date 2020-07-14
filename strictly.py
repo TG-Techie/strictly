@@ -2,7 +2,6 @@ from typing import *
 import typing as _typing
 from functools import wraps # a wrapping tool that maintains sanitation.
 
-
 # the following flags are instancse attributes on the strictly function
 #   disable             : turns off type checking and wrapping
 
@@ -49,8 +48,10 @@ def strictly(func):
     if strictly.disable:
         return func
 
-    assert callable(func), f"only callable objects can be decorated as strict (classes are not supported, decoate __init__ instead)"
-    assert hasattr(func, '__annotations__'), f"an object must be annotateable to be decorated as strict"
+    assert callable(func),('this line is from strictly',\
+        f"only callable objects can be decorated as strict, got {func}")[1]
+    assert hasattr(func, '__annotations__'),('this line is from strictly',\
+        f"an object must be annotateable to be decorated as strict")[1]
 
     # get base info about all the arguments
     anotes = func.__annotations__
