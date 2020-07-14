@@ -56,69 +56,6 @@ invalid argument type in call of 'heyey', <function heyey at 0x7fd160203c10>
 ```
 </details>
 
-## Type Checking Custom Classes
-Use strictly with custom classes as you would with a builtin class. Strictly has full support for single class type hints and limited support for Union and Generic notation
-(See: "Using the Typing Module" below).
-```python
-from strictly import *
-
-class Scene():
-    # any function (including methods) can by strictly typed
-    @strictly
-    def __init__(self, number: int):
-        # b/c this is a method the self argument is not annotated
-        # neither is the return type
-        self.number = number
-
-# You can use any class in the annotations, see the argument below
-@strictly
-def narrate(scene: Scene):
-    print(f"on to scene {scene.number}, which is a smashing scene with some"\
-        +" lovely acting, in which Arthur discovers a vital clue.")
-
-# let's test with good inputs
-the_scene = Scene(24)
-narrate(the_scene)
-# now let's add some bad inputs
-the_scene = Scene('not a number') # 1st TypingError
-narrate('nothing') # 2nd TypingError
-```
-See `/examples/custom_classes.py` for another custom class example.
-
-<details>
-<summary>Show 1st Traceback</summary>
-
-```
-on to scene 24, which is a smashing scene with some lovely acting, in which Arthur discovers a vital clue.
-Traceback (most recent call last):
-  File "/Users/jonahym/Documents/thoughts/py_static/examples/simple_custom_classes.py", line 21, in <module>
-    the_scene = Scene('not a number') # TypingError
-  File "/Users/jonahym/Documents/thoughts/py_static/strictly.py", line 78, in strict_func
-    raise TypingError( # this Error is from strictly
-strictly.TypingError:
-invalid argument type in call of '__init__', <function Scene.__init__ at 0x7fc2b801c9d0>
-        argument 'number' must be of type <int>
-        found argument of type <str> from value 'not a number'
-```
-</details>
-
-<details>
-<summary>Show 2nd Traceback</summary>
-
-```
-on to scene 24, which is a smashing scene with some lovely acting, in which Arthur discovers a vital clue.
-Traceback (most recent call last):
-  File "/Users/jonahym/Documents/thoughts/py_static/examples/simple_custom_classes.py", line 22, in <module>
-    narrate('nothing') # 2nd TypingError
-  File "/Users/jonahym/Documents/thoughts/py_static/strictly.py", line 78, in strict_func
-    raise TypingError( # this Error is from strictly
-strictly.TypingError:
-invalid argument type in call of 'narrate', <function narrate at 0x7f8b1827e3a0>
-        argument 'scene' must be of type <Scene>
-        found argument of type <str> from value 'nothing'
-```
-</details>
-
 ## Incremental Integration
 You do not need to annotate every argument, this is meant to make the
 transition to using strictly as easy as possible. Just decorate any function
@@ -173,11 +110,72 @@ TypeError: can only concatenate str (not "int") to str
 ```
 </details>
 
+## Type Checking Custom Classes
+Use strictly with custom classes as you would with a builtin class. Strictly has full support for single class type hints and limited support for Union and Generic notation
+(See: "Using the Typing Module" below).
+```python
+from strictly import *
+
+class Scene():
+    # any function (including methods) can by strictly typed
+    @strictly
+    def __init__(self, number: int):
+        # b/c this is a method the self argument is not annotated
+        # neither is the return type
+        self.number = number
+
+# You can use any class in the annotations, see the argument below
+@strictly
+def narrate(scene: Scene):
+    print(f"on to scene {scene.number}, which is a smashing scene with some"\
+        +" lovely acting, in which Arthur discovers a vital clue.")
+
+# let's test with good inputs
+the_scene = Scene(24)
+narrate(the_scene)
+# now let's add some bad inputs
+the_scene = Scene('not a number') # 1st TypingError
+narrate('nothing') # 2nd TypingError
+```
+<details>
+<summary>Show 1st Traceback</summary>
+
+```
+on to scene 24, which is a smashing scene with some lovely acting, in which Arthur discovers a vital clue.
+Traceback (most recent call last):
+  File "/Users/jonahym/Documents/thoughts/py_static/examples/simple_custom_classes.py", line 21, in <module>
+    the_scene = Scene('not a number') # TypingError
+  File "/Users/jonahym/Documents/thoughts/py_static/strictly.py", line 78, in strict_func
+    raise TypingError( # this Error is from strictly
+strictly.TypingError:
+invalid argument type in call of '__init__', <function Scene.__init__ at 0x7fc2b801c9d0>
+        argument 'number' must be of type <int>
+        found argument of type <str> from value 'not a number'
+```
+</details>
+
+<details>
+<summary>Show 2nd Traceback</summary>
+
+```
+on to scene 24, which is a smashing scene with some lovely acting, in which Arthur discovers a vital clue.
+Traceback (most recent call last):
+  File "/Users/jonahym/Documents/thoughts/py_static/examples/simple_custom_classes.py", line 22, in <module>
+    narrate('nothing') # 2nd TypingError
+  File "/Users/jonahym/Documents/thoughts/py_static/strictly.py", line 78, in strict_func
+    raise TypingError( # this Error is from strictly
+strictly.TypingError:
+invalid argument type in call of 'narrate', <function narrate at 0x7f8b1827e3a0>
+        argument 'scene' must be of type <Scene>
+        found argument of type <str> from value 'nothing'
+```
+</details>
+
 ## Using the Typing Module
 Currently, strictly has limited support for generic notation from the typing module;
 supported generics include `Dict[T, S]`, `List[T]`, `Tuple[T]`,`Union[T, S...]`,and `Optional[T]` for non-generic inputs.
 
-Work on making strictly completely comnpatible with the typing module is on going (See: "Possible Future Feature" below).
+Work on making strictly completely comnpatible with the typing module is on going (See: "Possible Future Features" below).
 
 #### Iterable Generics
 Iterable generics are treated as normal variables, only the argument is
