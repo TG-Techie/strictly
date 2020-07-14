@@ -127,7 +127,7 @@ class Scene():
         # neither is the return type
         self.number = number
 
-# You can use any class in the annotations, see the argument below
+# Use any class in annotations
 @strictly
 def narrate(scene: Scene):
     print(f"on to scene {scene.number}, which is a smashing scene with some"\
