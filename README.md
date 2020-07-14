@@ -47,24 +47,24 @@ invalid argument type in call of 'heyey', <function heyey at 0x7fd160203c10>
 ## Incremental Integration
 You do not need to annotate every argument, this is meant to make the
 transition to using strictly as easy as possible. Just decorate any function
-you want strictly typed and fill in the annotations later.
+you want strictly typed and fill in the argument and return annotations later, any unannotated arguments or return type won't be checked.
 ```python
 from strictly import *
 
 @strictly
-def foo(unchecked, checked: int) -> int:
+def add(unchecked, checked: int) -> int:
     return unchecked+checked
 
 # this will be fine
-foo(1, 2)
+add(1, 2)
 
 # foo only allows ints to be returned
-foo(3.0, 4) # TypingError
+add(3.0, 4) # TypingError
 # if returning 'float's is desired functionality the return annotation should
 #   be from the typing module, EX: `Union[int, float]`
 
 # this will not work b/c `str`s and 'int's cannot be added together
-foo('5', 6) # concatenation error
+add('5', 6) # concatenation error
 # this type error was not caught by strictly b/c the 'unchecked' argument was not annotated
 ```
 <details>
@@ -99,7 +99,7 @@ TypeError: can only concatenate str (not "int") to str
 </details>
 
 ## Distribution / Production
-Procedurally type checking every input at runtime slows down performance,
+Procedurally type checking every input at run-time slows down performance,
 inorder to combat this strictly can be disbaled completely.
 ```python
 strictly.disable = True
@@ -168,7 +168,7 @@ TypeError: '>' not supported between instances of 'str' and 'int'
 ```
 </details>
 <br/>
-This functionality was intentionally excluded to reduce runtime burden. Check this kind of error conventionally:
+This functionality was intentionally excluded to reduce run-time burden. Check this kind of error conventionally:
 
 ```python
 assert all([isinstance(num, int) for num in nums]), "the input must only contain 'int's"
@@ -183,6 +183,6 @@ assert all([isinstance(num, int) for num in nums]), "the input must only contain
 Strictly is distributed freely under the MIT License.
 
 #### Possible Future Features (no promises):
- - Add a `strictly.disable_checks` flag so that every function gets altered but won't be checked at runtime.
+ - Add a `strictly.disable_checks` flag so that every function gets altered but won't be checked at run-time.
  - A `strictly.require_hints` flag to ensure every argument has a type hint (defauting False).
  - An opt-in option feature to programatically check the content of generics.
