@@ -178,7 +178,7 @@ invalid argument type in call of 'narrate', <function narrate at 0x7f8b1827e3a0>
 Currently, strictly has limited support for generic notation from the typing module;
 supported generics include `Dict[T, S]`, `List[T]`, `Tuple[T]`,`Union[T, S...]`,and `Optional[T]` for non-generic inputs.
 
-Work on making strictly completely comnpatible with the typing module is on going (See: "Possible Future Features" below).
+Work on making strictly completely compatible with the typing module is on going (See: "Possible Future Features" below).
 
 #### Iterable Generics
 Iterable generics are treated as normal variables, only the argument is
