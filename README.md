@@ -10,11 +10,13 @@ All you need to do is decorate your functions with `strictly`.
 from strictly import *
 
 @strictly
-def my_func(a: int, b:int) -> int:
+def my_func(a: int, b: int) -> int:
     return a + b
 ```
 
-#### Use Any Kind of Inputs
+<details>
+<summary> Longer Example </summary>
+
 ```python
 from typing import *
 from strictly import *
@@ -55,11 +57,11 @@ invalid argument type in call of 'heyey', <function heyey at 0x7fd160203c10>
         found argument of type <int> from value 5
 ```
 </details>
+</details>
 
 ## Incremental Integration
-You do not need to annotate every argument, this is meant to make the
-transition to using strictly as easy as possible. Just decorate any function
-you want strictly typed and fill in the argument and return annotations later, any unannotated arguments or return type won't be checked.
+Unannotated arguments will not be checked, this is meant to make the strictly typed transition as easy as possible.
+Just decorate any function you want strictly typed and fill in the argument and return annotations later.
 ```python
 from strictly import *
 
@@ -109,6 +111,7 @@ Traceback (most recent call last):
 TypeError: can only concatenate str (not "int") to str
 ```
 </details>
+
 
 ## Type Checking Custom Classes
 Use strictly with custom classes as you would with a builtin class. Strictly has full support for single class type hints and limited support for Union and Generic notation
