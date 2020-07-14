@@ -7,6 +7,15 @@ Write type-safe python code with confidence, focus on the problem you need to so
 ## Usage Example:
 All you need to do is decorate your functions with `strictly`.
 ```python
+from strictly import *
+
+@strictly
+def my_func(a: int, b:int) -> int:
+    return a + b
+```
+
+#### Use Any Kind of Inputs
+```python
 from typing import *
 from strictly import *
 
@@ -74,6 +83,8 @@ narrate(the_scene)
 the_scene = Scene('not a number') # 1st TypingError
 narrate('nothing') # 2nd TypingError
 ```
+See `/examples/custom_classes.py` for another custom class example.
+
 <details>
 <summary>Show 1st Traceback</summary>
 
@@ -107,8 +118,6 @@ invalid argument type in call of 'narrate', <function narrate at 0x7f8b1827e3a0>
         found argument of type <str> from value 'nothing'
 ```
 </details>
-<br/>
-See `/examples/custom_classes.py` for more examples.
 
 ## Incremental Integration
 You do not need to annotate every argument, this is meant to make the
