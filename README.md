@@ -223,9 +223,8 @@ inorder to combat this strictly can be disbaled completely.
 ```python
 strictly.disable = True
 ```
-When strictly is disabled any previously altered functions will not be checked when called.
-Additionally, any functions decorated after strictly is disabled will not be altered and
-won't be checked, even if strictly is enabled later.
+When strictly is disabled functions will not be altered, meaning even if strictly
+is turned back on any functions made while strictly was disbaled will not be checked.
 <details>
 <summary>Longer Example</summary>
 
@@ -242,9 +241,8 @@ strictly.disable = True # from here on all functions are unaltered
 def bar(y: str) -> str:
     return y
 
-#since strictly is disabled...
-foo(None) # this has a small performance hit b/c it was altered
-bar(None)
+foo(None) # this will be checked
+bar(None) # this won't be checked
 ```
 </details>
 
