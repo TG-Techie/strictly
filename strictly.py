@@ -28,7 +28,7 @@ def _tupleize_type(tp):
         elif hasattr(tp, '__origin__'):
             return (tp.__origin__,)
         else:
-            raise DeterminationError(f"cannot determin what type to check {tp} against")
+            raise DeterminationError(f"cannot determine what type to check {tp} against")
     elif isinstance(tp, type):
         ret = (tp,)
     elif isinstance(tp, tuple):
