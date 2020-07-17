@@ -6,31 +6,29 @@ from functools import wraps # a wrapping tool that maintains sanitation.
 #   disable             : turns off type checking and wrapping
 
 # set what should be exported from the module
-__all__ = ['strictly', 'TypingError', 'NoneType']
+__all__ = ['strictly', 'TypingError', 'DeterminationError', 'NoneType']
 
 NoneType = type(None)
 
 class TypingError(TypeError):
     pass
 
+class DeterminationError(TypeError):
+    pass
+
 def _tupleize_type(tp):
-    #print('\n_tupleize_type')
     if tp is None:
         ret = type(None)
     if isinstance(tp, _typing._GenericAlias):
-        if tp._name == None:
+        if tp.__origin__ == Union:
             tups = [_tupleize_type(teyep) for teyep in tp.__args__]
             ret = ()
             for tup in tups:
                 ret += tup
-        elif tp._name == 'Dict':
-            return (dict,)
-        elif tp._name == 'List':
-            return (list,)
-        elif tp._name == 'Tuple':
-            return (tuple,)
+        elif hasattr(tp, '__origin__'):
+            return (tp.__origin__,)
         else:
-            raise TypingError(f"unsupported generic alias {tp} not yet supported, try using a 'Union' or the base type (EX: 'dict' instead of Dict[Foo, Bar])")
+            raise DeterminationError(f"cannot determin what type to check {tp} against")
     elif isinstance(tp, type):
         ret = (tp,)
     elif isinstance(tp, tuple):
