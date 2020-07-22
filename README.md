@@ -124,7 +124,7 @@ class Scene():
     @strictly
     def __init__(self, number: int):
         # b/c this is a method the self argument is not annotated
-        # neither is the return type
+        # since this is '__init__' the return type isn't annotated either
         self.number = number
 
 # Use any class in annotations
