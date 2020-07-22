@@ -1,56 +1,67 @@
 from typing import *
 import typing as _typing
 from functools import wraps # a wrapping tool that maintains sanitation.
+from types import FunctionType
 
-
-# the following flags are instancse attributes on the strictly function
-#   disable             : turns off type checking and wrapping
+# the following flags are instance attributes on the 'strictly' function
+#   disable : turns off type wrapping
 
 # set what should be exported from the module
-__all__ = ['strictly', 'TypingError', 'NoneType']
+__all__ = ['strictly', 'TypingError', 'DeterminationError', 'NoneType']
 
 NoneType = type(None)
 
 class TypingError(TypeError):
     pass
 
-def _tupleize_type(tp):
-    #print('\n_tupleize_type')
-    if tp is None:
+class DeterminationError(TypeError):
+    pass
+
+def _tupleize_type(tp: Union[None, type, tuple, _typing._GenericAlias]) -> Tuple[type]:
+    if tp is None: # type convention to use 'None' instead of 'NoneType'
         ret = type(None)
-    if isinstance(tp, _typing._GenericAlias):
-        if tp._name == None:
-            tups = [_tupleize_type(teyep) for teyep in tp.__args__]
-            ret = ()
-            for tup in tups:
-                ret += tup
-        elif tp._name == 'Dict':
-            return (dict,)
-        elif tp._name == 'List':
-            return (list,)
-        elif tp._name == 'Tuple':
-            return (tuple,)
-        else:
-            raise TypingError(f"unsupported generic alias {tp} not yet supported, try using a 'Union' or the base type (EX: 'dict' instead of Dict[Foo, Bar])")
-    elif isinstance(tp, type):
+    elif isinstance(tp, type): # any individual type
         ret = (tp,)
-    elif isinstance(tp, tuple):
+    elif isinstance(tp, tuple): # allow for recursive call of _tupleize_type to flatten inputs
         tups = [_tupleize_type(teyep) for teyep in tp]
         ret = ()
         for tup in tups:
             ret += tup
+    elif isinstance(tp, _typing._GenericAlias): # account for typing Generics
+        if tp.__origin__ == Union:
+            tups = [_tupleize_type(teyep) for teyep in tp.__args__]
+            ret = ()
+            for tup in tups:
+                ret += tup
+        elif hasattr(tp, '__origin__'):
+            return (tp.__origin__,)
+        else:
+            raise DeterminationError(f"cannot determine what type to check {tp} against")
     else:
-        ret = (type(tp),)
+        raise DeterminationError(f"cannot determine what type to check {tp} against")
     return ret
 
-def strictly(func):
-    global strictly
+def strictly(func: FunctionType) -> FunctionType:
+    """
+        add run-time type checking to a function from its type hints
+    """
+
+    ###
+    # this implementation of strictly wraps the input function
+    # The long term goal might be to generate python bytecode and insert it
+    # at the front of the function and insert return checks infront of the
+    # return bytecode
+    ###
+
+    global strictly, _tupleize_type
 
     if strictly.disable:
         return func
 
-    assert callable(func), f"only callable objects can be decorated as strict (classes are not supported, decoate __init__ instead)"
-    assert hasattr(func, '__annotations__'), f"an object must be annotateable to be decorated as strict"
+    assert callable(func),('this line is from strictly',\
+        f"only callable objects can be decorated as strict, got {func}")[1]
+    assert hasattr(func, '__annotations__'),('this line is from strictly',\
+        f"an object must be annotateable to be decorated as strict")[1]
 
     # get base info about all the arguments
     anotes = func.__annotations__
@@ -68,10 +79,6 @@ def strictly(func):
     # define a wrapper function to perform the type_checking
     @wraps(func) # add sanitation
     def strict_func(*args, **kwargs):
-        # if strictly is disable at runtime do not check types
-        if strictly.disable:
-            return func(*args, **kwargs) # this line is a pass-through from strictly
-
         # check the positional arguments
         for pack, arg in zip(var_packs, args):
             index, name, types = pack
@@ -92,12 +99,11 @@ def strictly(func):
                     +f"\tfound kwarg of type <{type(arg).__name__}> from value {repr(arg)}"
                     )
         # run the actual function
-        # move the call onto another line to make excepts clearer
         ret = \
         func( # this line is a pass-through from strictly
             *args, **kwargs
         )
-        # check the type of the return value
+
         if check_return:
             if not isinstance(ret, ret_types):
                 raise TypingError( # this Error is from strictly
@@ -105,7 +111,8 @@ def strictly(func):
                     +f"\texpected type <{', '.join([typ.__name__ for typ in ret_types])}>\n"\
                     +f"\tfound return of type <{type(ret).__name__}> from value {repr(ret)}"
                     )
-        # ahhh, finally return
+
+        # aaaaaand, finally return the value
         return ret
 
     # return the wrapped function
@@ -113,3 +120,6 @@ def strictly(func):
 
 # set the disable flag
 strictly.disable = not __debug__
+
+# and here we have could fun!
+strictly = strictly(strictly)
