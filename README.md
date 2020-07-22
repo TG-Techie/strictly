@@ -181,9 +181,8 @@ supported generics include `Dict[T, S]`, `List[T]`, `Tuple[T]`,`Union[T, S...]`,
 Work on making strictly completely compatible with the typing module is on going (See: "Possible Future Features" below).
 
 #### Iterable Generics
-Iterable generics are treated as normal variables, only the argument is
-checked to for proper type, not the contents of the argument.
-for example:
+Iterable generics are treated as normal variables, only the argument itself is checked for the proper type, not the contents .
+For example:
 ```python
 from typing import *
 from strictly import *
@@ -249,7 +248,7 @@ bar(None) # this won't be checked
 ## Issues and Features:
 - For both Issues and proposed features please feel free to message me on discord: `TG-Techie#5402`.
 - __Bugs__: If you find a bug/issue in strictly please file an issue on github with an example and explanation.
-- __Features__: If you have a proposed feature please fork this repositor and make a pull request with the code or without code make an issue to discuss the possible feature.
+- __Features__: If you have a proposed feature please fork the [strictly repo](https://github.com/TG-Techie/strictly) and make a pull request with the code or without code make an issue to discuss the possible feature.
 
 ### License
 Strictly is distributed freely under the MIT License.
@@ -257,5 +256,5 @@ Strictly is distributed freely under the MIT License.
 #### Possible Future Features (no promises):
  - support for `ForwardRef` Hint from the typing module.
  - Add a `strictly.disable_checks` flag so that every function gets altered but won't be checked at run-time.
- - A `strictly.require_hints` flag to ensure every argument has a type hint (defauting False).
- - An opt-in option feature to programatically check the content of generics.
+ - A `strictly.require_hints` flag to ensure every argument has a type hint (defaulting False).
+ - An opt-in option feature to programmatically check the content of generics.
