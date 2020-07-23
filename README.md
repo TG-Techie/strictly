@@ -60,9 +60,9 @@ invalid argument type in call of 'heyey', <function heyey at 0x7fd160203c10>
 </details>
 
 ### Installation
-strictly is available through pypi, just pip install it.
+strictly is available through pypi, just pip install it using the command line.
 ```bash
-pip3 install strictly
+$pip3 install strictly
 ```
 
 ## Incremental Integration
