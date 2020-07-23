@@ -59,6 +59,12 @@ invalid argument type in call of 'heyey', <function heyey at 0x7fd160203c10>
 </details>
 </details>
 
+### Installation
+strictly is available through pypi, just pip install it.
+```bash
+pip3 install strictly
+```
+
 ## Incremental Integration
 Unannotated arguments will not be checked, this is meant to make the strictly typed transition as easy as possible.
 Just decorate any function you want strictly typed and fill in the argument and return annotations later.
