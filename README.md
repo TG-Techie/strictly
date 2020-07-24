@@ -77,12 +77,6 @@ invalid positional argument type in call of 'my_func', <function my_func at 0x7f
         found positional argument of type <str> from the value 'Not a number'
 ```
 
-### Installation
-strictly is available through pypi, just pip install it using the command line.
-```bash
-$pip3 install strictly
-```
-
 ## Incremental Integration
 Unannotated arguments will not be checked, this is meant to make the strictly typed transition as easy as possible.
 Just decorate any function you want strictly typed and fill in the argument and return annotations later.
@@ -238,6 +232,12 @@ This functionality was intentionally excluded to reduce run-time burden. Check t
 
 ```python
 assert all([isinstance(num, int) for num in nums]), "the input must only contain 'int's"
+```
+
+### Installation
+strictly is available through pypi, just pip install it using the command line.
+```bash
+$pip3 install strictly
 ```
 
 ## Distribution / Production

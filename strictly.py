@@ -8,7 +8,7 @@ from types import FunctionType
 
 # set what should be exported from the module
 __all__ = ['strictly', 'TypingError', 'DeterminationError', 'NoneType']
-__version__ = '1.1.2'
+__version__ = '1.1.3'
 
 NoneType = type(None)
 
