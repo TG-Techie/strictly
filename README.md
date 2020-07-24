@@ -59,6 +59,23 @@ invalid argument type in call of 'heyey', <function heyey at 0x7fd160203c10>
 </details>
 </details>
 
+### Tracebacks
+When a strictly typed function is passed an argument of the wrong type strictly will raise a `TypingError` with a formatted error message.
+```python
+my_func(5, 3) # returns 8, no issue
+my_func('Not a number', 'Definitely not a number!') # TypingError
+```
+Traceback Below
+```
+Traceback (most recent call last):
+  File "/Users/jonahym/Documents/strictly/strictly.py", line 118, in strict_func
+    raise TypingError(*_ # this line is from strictly
+strictly.TypingError:
+invalid positional argument type in call of 'my_func', <function my_func at 0x7fef9ae751e0>
+        positional argument 'a' must be of type <int>
+        found positional argument of type <str> from the value 'Not a number'
+```
+
 ### Installation
 strictly is available through pypi, just pip install it using the command line.
 ```bash

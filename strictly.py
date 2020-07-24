@@ -12,11 +12,41 @@ __version__ = '1.1.1'
 
 NoneType = type(None)
 
-class TypingError(TypeError):
-    pass
-
 class DeterminationError(TypeError):
     pass
+
+class TypingError(TypeError):
+    def __init__(self,
+            kind: str, # a description of the value like 'positional argument' or 'return'
+            name: Union[str, None], # the name of the arg or kwarg, None if ther is no name
+            func: FunctionType, # the function that was called
+            arg, # the argument of the correct type
+            type_tup: tuple, # the expected types
+            ):
+        if not len(type_tup):
+            type_tup = (object,)
+
+        expected_types = ', '.join([typ.__name__ for typ in type_tup])
+        rxed_type_name = type(arg).__name__
+
+        kind = f"{kind} "
+        if len(name):
+            name = f"'{name}' "
+        elif name is None:
+            name = ''
+
+        repr_text = repr(arg)
+        if len(repr_text) > 20:
+            from_detail = f"at {id(arg)}"
+        else:
+            from_detail = f"from the value {repr_text}"
+
+
+        _ = f"\ninvalid {kind}type in call of {repr(func.__name__)}, {func}\n"\
+           +f"\t{kind}{name}must be of type <{expected_types}>\n"\
+           +f"\tfound {kind}of type <{rxed_type_name}> {from_detail}"
+        super().__init__(_# this line is from strictly
+             )
 
 def _tupleize_type(tp: Union[None, type, tuple, _typing._GenericAlias]) -> Tuple[type]:
     if tp is None: # type convention to use 'None' instead of 'NoneType'
@@ -54,7 +84,7 @@ def strictly(func: FunctionType) -> FunctionType:
     # return bytecode
     ###
 
-    global strictly, _tupleize_type
+    global strictly, _tupleize_type, _raise_strictly_error
 
     if strictly.disable:
         return func
@@ -79,48 +109,42 @@ def strictly(func: FunctionType) -> FunctionType:
 
     # define a wrapper function to perform the type_checking
     @wraps(func) # add sanitation
-    def strict_func(*args, **kwargs):
+    def strictly_typed_func(*args, **kwargs):
         # check the positional arguments
         for pack, arg in zip(var_packs, args):
             index, name, types = pack
             if not isinstance(arg, types):
-                raise TypingError( # this Error is from strictly
-                     f"\ninvalid argument type in call of {repr(func.__name__)}, {func}\n"\
-                    +f"\targument '{name}' must be of type <{', '.join([typ.__name__ for typ in types])}>\n"\
-                    +f"\tfound argument of type <{type(arg).__name__}> from value {repr(arg)}"
-                    )
+                _ = (f"positional argument", name, func, arg, types)
+                raise TypingError(*_ # this line is from strictly
+                )
         # check all keyword arguments
         for kw, arg in kwargs.items():
             types = var_dict[kw]
             #print(kw, arg, types)
             if not isinstance(arg, types):
-                raise TypingError( # this Error is from strictly
-                     f"\ninvalid keyword argument type in call of {repr(func.__name__)}, {func}\n"\
-                    +f"\tkwarg '{kw}' must be of type <{', '.join([typ.__name__ for typ in types])}>\n"\
-                    +f"\tfound kwarg of type <{type(arg).__name__}> from value {repr(arg)}"
-                    )
+                _ = ('keyword argument', kw, func, arg, types)
+                raise TypingError(*_ # this line is from strictly
+                )
         # run the actual function
         ret = \
-        func( # this line is a pass-through from strictly
-            *args, **kwargs
+        func(*args, **kwargs # this line is a pass-through from strictly
         )
 
         if check_return:
             if not isinstance(ret, ret_types):
-                raise TypingError( # this Error is from strictly
-                     f"\nincorrect return type from {func}\n"\
-                    +f"\texpected type <{', '.join([typ.__name__ for typ in ret_types])}>\n"\
-                    +f"\tfound return of type <{type(ret).__name__}> from value {repr(ret)}"
-                    )
+                _ = ('return', '', func, ret, ret_types)
+                raise TypingError(*_ # this line is from strictly
+                )
 
         # aaaaaand, finally return the value
         return ret
 
     # return the wrapped function
-    return strict_func
+    return strictly_typed_func
 
 # set the disable flag
 strictly.disable = not __debug__
 
 # and here we have could fun!
 strictly = strictly(strictly)
+#_raise_strictly_error = strictly(_raise_strictly_error)
