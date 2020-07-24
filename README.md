@@ -61,11 +61,12 @@ invalid argument type in call of 'heyey', <function heyey at 0x7fd160203c10>
 
 ### Tracebacks
 When a strictly typed function is passed an argument of the wrong type strictly will raise a `TypingError` with a formatted error message.
+For example, this:
 ```python
 my_func(5, 3) # returns 8, no issue
 my_func('Not a number', 'Definitely not a number!') # TypingError
 ```
-Traceback Below
+will have this traceback below:
 ```
 Traceback (most recent call last):
   File "/Users/jonahym/Documents/strictly/strictly.py", line 118, in strict_func
