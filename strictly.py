@@ -2,7 +2,7 @@ from typing import *
 import typing as _typing
 from functools import wraps # a wrapping tool that maintains sanitation.
 from types import FunctionType
-
+from dataclasses import is_dataclass
 # the following flags are instance attributes on the 'strictly' function
 #   disable : turns off type wrapping
 
@@ -72,10 +72,29 @@ def _tupleize_type(tp: Union[None, type, tuple, _typing._GenericAlias]) -> Tuple
         raise DeterminationError(f"cannot determine what type to check {tp} against")
     return ret
 
-def strictly(func: FunctionType) -> FunctionType:
+#strictly is strictly typed at the bottom of this file
+def strictly(something: Union[FunctionType, type]) -> Union[FunctionType, type]:
     """
         add run-time type checking to a function from its type hints
     """
+
+    global strictly, is_dataclass, strictly_wrap_func
+
+    if strictly.disable:
+        return something
+
+    if isinstance(something, FunctionType):
+        return strictly_wrap_func(something)
+    elif isinstance(something, type):
+        if is_dataclass(something):
+            something.__init__ = strictly_wrap_func(something.__init__)
+            return something
+        else:
+            raise ValueError(f"non-dataclasses cannot be strictly typed, got {something}")
+    else:
+        raise ValueError("something went very very wrong, in strictly; his branch should not be reachable")
+
+def strictly_wrap_func(func: FunctionType) -> FunctionType:
 
     ###
     # this implementation of strictly wraps the input function
@@ -85,9 +104,6 @@ def strictly(func: FunctionType) -> FunctionType:
     ###
 
     global strictly, _tupleize_type, _raise_strictly_error
-
-    if strictly.disable:
-        return func
 
     assert callable(func),('this line is from strictly',\
         f"only callable objects can be decorated as strict, got {func}")[1]
@@ -144,7 +160,7 @@ def strictly(func: FunctionType) -> FunctionType:
 
 # set the disable flag
 strictly.disable = not __debug__
-
-# and here we have could fun!
 strictly = strictly(strictly)
-#_raise_strictly_error = strictly(_raise_strictly_error)
+
+# and here we have could fun but don't!
+# _raise_strictly_error = strictly(_raise_strictly_error)
